@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Black Families and Foster Care</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet">
+        <script src="jquery-3.1.1.min.js"></script>
+        <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            #map {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <style>
+            .marker {
+                background-image: url("https://docs.mapbox.com/mapbox-gl-js/assets/pin.svg");
+                background-size: cover;
+                cursor: pointer;
+            }
+
+            .mapboxgl-popup {
+                max-width: 500px;
+                font: 10px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+                font-size: 20px;
+            }
+            .calculation-box {
+                height: 120px;
+                width: 550px;
+                position: absolute;
+                bottom: 70%;
+                left: 1%;
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 3px;
+                top:10px;
+                text-align: top;
+            }
+        </style>
+
+        <div id="map"></div>
+        <div class="calculation-box">
+            <pre>                      Black Families</pre>
+            <p>&emsp;&emsp;Children in foster care by race and Hispanic origin in the United States.</p>
+            <pre>                 Race Group: Non-Hispanic Black.<br></pre><pre>                        Date Type: Percent</pre>
+        </div>
+        <script type="text/javascript">
+            var mapData;
+            function getJson(data) {
+                // data 就是要取的json数据
+                console.log(data);
+                mapData = data.features;
+                // 可以在函数内部对json数据进行处理
+            }
+            mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zaHRvcm5xdSIsImEiOiJjbDZ6ZmhuZWcwMHh1M3VxZjB3cnVzY3NtIn0.5A6qMlIy1NC1h4z86dgmHw';
+            /*const geojson = {
+                'type': 'FeatureCollection',
+                'features': [
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'name': 'Arizona',
+                            'description': '2018: 11% | 2019: 12% | 2020: 11%',
+                            'height': 5000
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-111.81062532837618, 34.41328577627822]
+                        }
+                    }, {
+                        'type': 'Feature',
+                        'properties': {
+                            'name': 'Aconcagua',
+                            'height': 6961
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-70.0112, -32.653197]
+                        }
+                    }, {
+                        'type': 'Feature',
+                        'properties': {
+                            'name': 'Vinson Massif',
+                            'height': 4892
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-85.617147, -78.525483]
+                        }
+                    }, {
+                        'type': 'Feature',
+                        'properties': {
+                            'name': 'Kilimanjaro',
+                            'height': 5895
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [37.353333, -3.075833]
+                        }
+                    }, {
+                        'type': 'Feature',
+                        'properties': {
+                            'name': 'Elbrus',
+                            'height': 5642
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [42.439167, 43.355]
+                        }
+                    }, {
+                        'type': 'Feature',
+                        'properties': {
+                            'name': 'Puncak Jaya',
+                            'height': 4884
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [137.158333, -4.078889]
+                        }
+                    }, {
+                        'type': 'Feature',
+                        'properties': {
+                            'name': 'Mauna Kea',
+                            'height': 4205
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-155.468056, 19.820667]
+                        }
+                    }
+                ]
+            };*/
+
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v12',
+                center: [
+                    -97.486052, 37.830348
+                ],
+                pitch: 50,
+                zoom: 4.0
+            });
+            let hoveredStateId = null;
+            map.on('load', () => {
+                map.addSource('states', {
+                    'type': 'geojson',
+                    'data': 'https://docs.mapbox.com/mapbox-gl-js/assets/us_states.geojson'
+                });
+
+                // The feature-state dependent fill-opacity expression will render the hover effect
+                // when a feature's hover state is set to true.
+                map.addLayer({
+                    'id': 'state-fills',
+                    'type': 'fill',
+                    'source': 'states',
+                    'layout': {},
+                    'paint': {
+                        'fill-color': '#C79316',
+                        'fill-opacity': [
+                            'case',
+                            [
+                                'boolean',
+                                [
+                                    'feature-state', 'hover'
+                                ],
+                                false
+                            ],
+                            1,
+                            0.5
+                        ]
+                    }
+                });
+
+                map.addLayer({
+                    'id': 'state-borders',
+                    'type': 'line',
+                    'source': 'states',
+                    'layout': {},
+                    'paint': {
+                        'line-color': '#B21112',
+                        'line-width': 2
+                    }
+                });
+
+                // When the user moves their mouse over the state-fill layer, we'll update the
+                // feature state for the feature under the mouse.
+                map.on('mousemove', 'state-fills', (e) => {
+                    if (e.features.length > 0) {
+                        if (hoveredStateId !== null) {
+                            map.setFeatureState({
+                                source: 'states',
+                                id: hoveredStateId
+                            }, {hover: false});
+                        }
+                        hoveredStateId = e
+                            .features[0]
+                            .id;
+                        map.setFeatureState({
+                            source: 'states',
+                            id: hoveredStateId
+                        }, {hover: true});
+                    }
+                });
+
+                // When the mouse leaves the state-fill layer, update the feature state of the
+                // previously hovered feature.
+                map.on('mouseleave', 'state-fills', () => {
+                    if (hoveredStateId !== null) {
+                        map.setFeatureState({
+                            source: 'states',
+                            id: hoveredStateId
+                        }, {hover: false});
+                    }
+                    hoveredStateId = null;
+                });
+                var features=mapData;
+                console.log(features)
+                for (const marker of features) {
+                    // Create a DOM element for each marker.
+                    const el = document.createElement('div');
+                    el.className = 'marker';
+                   // const size = marker.properties.height / 100;
+                    const size = 50;
+                    el.style.width = `${size}px`;
+                    el.style.height = `${size}px`;
+
+                    // Add a popup displayed on click for each marker
+                    const popup = new mapboxgl.Popup({offset: 25});
+                    popup.setHTML(`<h2>${marker.properties.STATE_NAME}</h2>${marker.properties.description}<br/>`);
+
+                    // Add markers to the map.
+                    new mapboxgl
+                        .Marker({
+                            element: el,
+                            // Point markers toward the nearest horizon
+                            rotationAlignment: 'horizon',
+                            offset: [
+                                0, -size / 2
+                            ]
+                        })
+                        .setLngLat(marker.geometry.coordinates)
+                        .setPopup(popup)
+                        .addTo(map);
+                }
+            });
+            map.on('style.load', () => {
+                map.setFog({}); // Set the default atmosphere style
+            });
+        </script>
+        <!-- 2. 引入json文件 -->
+        <script type="text/javascript" src="./data.json"></script>
+    </body>
+</html>
