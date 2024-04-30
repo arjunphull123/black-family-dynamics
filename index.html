@@ -5,52 +5,17 @@
         <title>Family Dynamics and Race</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
         <script src="jquery-3.1.1.min.js"></script>
         <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-            }
-            #map {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                width: 100%;
-            }
-        </style>
     </head>
     <body>
-        <style>
-            .marker {
-                background-image: url("https://docs.mapbox.com/mapbox-gl-js/assets/pin.svg");
-                background-size: cover;
-                cursor: pointer;
-            }
-
-            .mapboxgl-popup {
-                max-width: 500px;
-                font: 10px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-                font-size: 20px;
-            }
-            .calculation-box {
-                height: 120px;
-                width: 550px;
-                position: absolute;
-                bottom: 70%;
-                left: 1%;
-                background-color: rgba(255, 255, 255, 0.9);
-                padding: 3px;
-                top:10px;
-                text-align: top;
-            }
-        </style>
 
         <div id="map"></div>
         <div class="calculation-box">
-            <pre>                      Black Families</pre>
-            <p>&emsp;&emsp;Children in foster care by race and Hispanic origin in the United States.</p>
-            <pre>                 Race Group: Non-Hispanic Black.<br></pre><pre>                        Date Type: Percent</pre>
+            <h1 class="title">BLACK FAMILY DYNAMICS.</h1>
+            <p class="subtitle">The map below contains data regarding the proportion of children in foster care who are Black across the United States.<br>Click on each state to see how this proportion has changed betwen 2000 and 2020.</p>
         </div>
         <script type="text/javascript">
             var mapData;
@@ -141,11 +106,11 @@
 
             const map = new mapboxgl.Map({
                 container: 'map',
-                style: 'mapbox://styles/mapbox/streets-v12',
+                style: 'mapbox://styles/arjunphull/clvmx2q5401ao01q1ei1xd5k0',
                 center: [
                     -97.486052, 37.830348
                 ],
-                pitch: 50,
+                pitch: 45,
                 zoom: 4.0
             });
             let hoveredStateId = null;
@@ -163,7 +128,7 @@
                     'source': 'states',
                     'layout': {},
                     'paint': {
-                        'fill-color': '#C79316',
+                        'fill-color': '#654321',
                         'fill-opacity': [
                             'case',
                             [
@@ -173,7 +138,7 @@
                                 ],
                                 false
                             ],
-                            1,
+                            0.75,
                             0.5
                         ]
                     }
@@ -185,7 +150,7 @@
                     'source': 'states',
                     'layout': {},
                     'paint': {
-                        'line-color': '#B21112',
+                        'line-color': '#654321',
                         'line-width': 2
                     }
                 });
@@ -251,9 +216,7 @@
                         .addTo(map);
                 }
             });
-            map.on('style.load', () => {
-                map.setFog({}); // Set the default atmosphere style
-            });
+
         </script>
         <!-- 2. 引入json文件 -->
         <script type="text/javascript" src="./data.json"></script>
